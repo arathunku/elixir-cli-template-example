@@ -1,4 +1,5 @@
-#!/usr/bin/env elixir
+#!/usr/bin/env -S ERL_FLAGS=+B elixir
+# What +Bi? https://github.com/erlang/otp/pull/4553
 
 defmodule Signals do
   @moduledoc """
@@ -15,7 +16,7 @@ defmodule Signals do
 
   ## Usage
 
-      $ signlas
+      $ signals
   """
 
   @args [help: :boolean]
@@ -26,9 +27,11 @@ defmodule Signals do
   end
 
   defp cmd([], []) do
+    IO.puts("I'll now hang and wait for C-c")
+    Process.sleep(:infinity)
   end
 
   defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
 end
 
-PipeReverseWords.main(System.argv())
+Signals.main(System.argv())

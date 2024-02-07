@@ -1,0 +1,30 @@
+#!/usr/bin/env elixir
+
+defmodule PipeReverseWords do
+  @moduledoc """
+
+  Handles incoming stream of words and reverses each line it.
+
+  ## Usage
+
+      $ shuf -n10 /usr/share/dict/american-english | tee /dev/tty | pipe-reverse-words
+  """
+
+  @args [help: :boolean]
+  def main(args) do
+    with {parsed, args} <- OptionParser.parse!(args, strict: @args) do
+      cmd(parsed, args)
+    end
+  end
+
+  defp cmd([], []) do
+    IO.stream()
+    |> Enum.map(&String.trim_trailing(&1, "\n"))
+    |> Enum.map(&String.reverse/1)
+    |> Enum.map(&IO.puts/1)
+  end
+
+  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+end
+
+PipeReverseWords.main(System.argv())

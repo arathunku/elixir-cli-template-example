@@ -1,0 +1,34 @@
+#!/usr/bin/env elixir
+
+defmodule Signals do
+  @moduledoc """
+
+  Example of handling signlas.
+
+  In particular, can we avoid ugly:
+
+  ```sh
+  ^C
+  BREAK: (a)bort (A)bort with dump (c)ontinue (p)roc info (i)nfo
+         (l)oaded (v)ersion (k)ill (D)b-tables (d)istribution
+  ```
+
+  ## Usage
+
+      $ signlas
+  """
+
+  @args [help: :boolean]
+  def main(args) do
+    with {parsed, args} <- OptionParser.parse!(args, strict: @args) do
+      cmd(parsed, args)
+    end
+  end
+
+  defp cmd([], []) do
+  end
+
+  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+end
+
+PipeReverseWords.main(System.argv())

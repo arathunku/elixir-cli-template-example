@@ -1,0 +1,35 @@
+#!/usr/bin/env elixir
+
+Mix.install([{:bandit, "~> 0.5"}])
+
+defmodule Server do
+  @moduledoc """
+
+  Starts HTTP server and responds to /ping
+
+  For WebSockets, see: https://github.com/phoenixframework/websock_adapter
+
+  ## Usage
+
+      $ server-http
+  """
+
+  use Plug.Router
+  plug :match
+  plug :dispatch
+
+  def main do
+    Bandit.start_link(plug: __MODULE__)
+    Process.sleep(:infinity)
+  end
+
+  get "/ping" do
+    send_resp(conn, 200, "pong")
+  end
+
+  match _ do
+    send_resp(conn, 404, "Not found")
+  end
+end
+
+Server.main()

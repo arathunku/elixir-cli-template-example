@@ -1,0 +1,40 @@
+#!/usr/bin/env -S ERL_FLAGS=+B elixir
+
+Mix.install([{:muontrap, "~> 1.0"}])
+
+defmodule SubprocessStreamer do
+  @moduledoc """
+
+  Example of spawning another process.
+
+  Wait! There's a dependency for that? Yea... you can do that without a dependency,
+  but it's trickly to properly clean up and shutdown subprocesses!
+  We absolutely don't want to leave anything hanging.
+
+  See: https://github.com/fhunleth/muontrap for more details.
+
+
+  ## Usage
+
+      subprocess-streamer -- journalctl -f
+  """
+
+  @args [help: :boolean]
+  def main(args) do
+    with {parsed, args} <- OptionParser.parse!(args, strict: @args) do
+      cmd(parsed, args)
+    end
+  end
+
+  defp cmd([], [subprocess_command | args]) do
+    _pid = spawn_link(fn ->
+      MuonTrap.cmd(subprocess_command, args, into: IO.stream(:stdio, :line))
+      System.stop()
+    end)
+    Process.sleep(:infinity)
+  end
+
+  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+end
+
+SubprocessStreamer.main(System.argv())

@@ -1,13 +1,12 @@
 #!/usr/bin/env -S ERL_FLAGS=+B elixir
-# What +Bi? https://github.com/erlang/otp/pull/4553
+# What +B? https://github.com/erlang/otp/pull/4553
 
 defmodule Signals do
   @moduledoc """
 
-  Example of handling signlas.
+  Example of handling signals.
 
-  In particular, can we avoid ugly:
-
+  In particular, can we avoid:
   ```sh
   ^C
   BREAK: (a)bort (A)bort with dump (c)ontinue (p)roc info (i)nfo
@@ -17,7 +16,11 @@ defmodule Signals do
   ## Usage
 
       $ signals
+
+  From another terminal send signals like USR1 or TERM
   """
+
+  @behaviour :gen_event
 
   @args [help: :boolean]
   def main(args) do
@@ -26,9 +29,36 @@ defmodule Signals do
     end
   end
 
+  def init(_), do: {:ok, nil}
+
+  def handle_event(:sigusr1, state) do
+    IO.puts("USR1, continue...")
+    {:ok, state}
+  end
+
+  def handle_event(:sigterm, _state) do
+    IO.puts("Ok, ok, let me take a moment and exit...")
+    Process.sleep(3)
+    System.stop()
+  end
+  def handle_event(signal, state), do: :erl_signal_handler.handle_event(signal, state)
+
+  def handle_call(_, state), do: {:ok, :ok, state}
+
+  def terminate(reason, _state) do
+    IO.puts("Goodbye! #{inspect(reason)}")
+  end
+
   defp cmd([], []) do
-    IO.puts("I'll now hang and wait for C-c")
-    Process.sleep(:infinity)
+    with :ok <- :gen_event.swap_handler(
+      :erl_signal_server, {:erl_signal_handler, []}, {__MODULE__, []}
+    ) do
+      IO.puts("I'll wait for signals!")
+      Process.sleep(:infinity)
+    else
+      err ->
+        IO.warn("Something went wrong. err=#{inspect(err)}")
+    end
   end
 
   defp cmd(_parsed, _args), do: IO.puts(@moduledoc)

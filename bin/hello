@@ -1,0 +1,35 @@
+#!/usr/bin/env elixir
+
+defmodule Hello do
+  @moduledoc """
+  Kick-off template, easy to extend by adding cmd/1 and updating @args.
+
+  If you don't exted to get any more complex, you can forget about the whole
+  module and just use OptionParser inline with `case`.
+
+  For easier iteration, I'll often execute `watchexec -- bin/hello`,
+  and keep as much as script running by default in `dry` mode if there's
+  any risky operation.
+
+  Normally I'd keep this @moduledoc the main doc, --help and prompt in case any
+  unknown arguments are unused.
+
+  Usage:
+
+     $ hello "Michal"
+     Hello World
+  """
+
+  @args [help: :boolean]
+  def main(args) do
+    with {parsed, args} <- OptionParser.parse!(args, strict: @args) do
+      cmd(parsed, args)
+    end
+  end
+
+  defp cmd([help: true], _), do: IO.puts(@moduledoc)
+  defp cmd([], [name]) when is_bitstring(name), do: IO.puts("Hello #{name}")
+  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+end
+
+Hello.main(System.argv())

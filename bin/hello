@@ -14,7 +14,7 @@ defmodule Hello do
   Normally I'd keep this @moduledoc the main doc, --help and prompt in case any
   unknown arguments are unused.
 
-  Usage:
+  ## Usage
 
      $ hello "Michal"
      Hello World

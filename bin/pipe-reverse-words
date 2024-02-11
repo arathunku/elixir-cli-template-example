@@ -12,9 +12,8 @@ defmodule PipeReverseWords do
 
   @args [help: :boolean]
   def main(args) do
-    with {parsed, args} <- OptionParser.parse!(args, strict: @args) do
-      cmd(parsed, args)
-    end
+    {parsed, args} = OptionParser.parse!(args, strict: @args)
+    cmd(parsed, args)
   end
 
   defp cmd([], []) do

@@ -1,0 +1,9 @@
+#!/usr/bin/env elixir
+Mix.install([:req])
+
+if System.get_env("DEPS_ONLY") == "true" do
+  System.halt(0)
+  Process.sleep(:infinity)
+end
+
+IO.puts("With DEPS_ONLY=true env, this line won't execute but dependencies will be cached.")

@@ -1,0 +1,43 @@
+#!/usr/bin/env elixir
+
+defmodule Tests do
+  @moduledoc """
+
+  Example of adding ExUnit to run tests when script is executed with MIX_ENV=test
+
+  ## Usage
+
+      $ tests
+      Hello World
+
+      iex> Tests.cmd([], [])
+
+  """
+
+  @args [help: :boolean]
+  def main(args) do
+    with {parsed, args} <- OptionParser.parse!(args, strict: @args) do
+      cmd(parsed, args)
+    end
+  end
+
+  defp cmd([help: true], _), do: IO.puts(@moduledoc)
+  defp cmd([], []), do: IO.puts("Hello World")
+  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+end
+
+
+if System.get_env("MIX_ENV") == "test" do
+  ExUnit.start()
+
+  defmodule TestsTest do
+    use ExUnit.Case, async: true
+    import ExUnit.CaptureIO
+
+    test "prints a message when no arguments are passed" do
+      assert capture_io(fn -> Tests.main([]) end) == "Hello World\n"
+    end
+  end
+else
+  Tests.main(System.argv())
+end

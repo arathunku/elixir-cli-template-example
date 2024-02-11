@@ -23,7 +23,10 @@ defmodule Tests do
 
   defp cmd([help: true], _), do: IO.puts(@moduledoc)
   defp cmd([], []), do: IO.puts("Hello World")
-  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+  defp cmd(_parsed, _args) do
+    IO.puts(@moduledoc)
+    System.stop(1)
+  end
 end
 
 
@@ -36,6 +39,10 @@ if System.get_env("MIX_ENV") == "test" do
 
     test "prints a message when no arguments are passed" do
       assert capture_io(fn -> Tests.main([]) end) == "Hello World\n"
+    end
+
+    test "prints help for unknown arguments" do
+      assert capture_io(fn -> Tests.main(["--help"]) end) =~ "Example of adding ExUnit"
     end
   end
 else

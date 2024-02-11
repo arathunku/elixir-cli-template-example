@@ -29,7 +29,10 @@ defmodule Hello do
 
   defp cmd([help: true], _), do: IO.puts(@moduledoc)
   defp cmd([], [name]) when is_bitstring(name), do: IO.puts("Hello #{name}")
-  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+  defp cmd(_parsed, _args) do
+    IO.puts(@moduledoc)
+    System.stop(1)
+  end
 end
 
 Hello.main(System.argv())

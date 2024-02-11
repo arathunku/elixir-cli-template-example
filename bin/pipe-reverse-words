@@ -24,7 +24,10 @@ defmodule PipeReverseWords do
     |> Enum.map(&IO.puts/1)
   end
 
-  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+  defp cmd(_parsed, _args) do
+    IO.puts(@moduledoc)
+    System.stop(1)
+  end
 end
 
 PipeReverseWords.main(System.argv())

@@ -61,7 +61,10 @@ defmodule Signals do
     end
   end
 
-  defp cmd(_parsed, _args), do: IO.puts(@moduledoc)
+  defp cmd(_parsed, _args) do
+    IO.puts(@moduledoc)
+    System.stop(1)
+  end
 end
 
 Signals.main(System.argv())
